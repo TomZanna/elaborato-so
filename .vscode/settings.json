@@ -1,0 +1,19 @@
+{
+    "C_Cpp.default.compileCommands": "builddir/vscode_compile_commands.json",
+    "mesonbuild.configureOnOpen": true,
+    "files.associations": {
+        "shared.h": "c",
+        "stdio.h": "c"
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "C_Cpp.clang_format_fallbackStyle": "LLVM",
+    "files.trimFinalNewlines": true,
+    "files.insertFinalNewline": true,
+    "mesonbuild.muonPath": "/home/tomzanna/muon",
+    "mesonbuild.formatting.enabled": true,
+    "mesonbuild.configureOptions": [
+        "--warnlevel=everything",
+        "--buildtype=debug"
+    ]
+}
