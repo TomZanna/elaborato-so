@@ -1,4 +1,4 @@
-# Connect 4
+# Connect 4 ![main workflow](https://github.com/TomZanna/elaborato-so/actions/workflows/ubuntu.yml/badge.svg)
 
 ## Introduzione
 Implementazione del gioco [Forza 4](https://en.wikipedia.org/wiki/Connect_Four) utilizzando le [system call System V](https://man7.org/linux/man-pages/man7/sysvipc.7.html) per l'elaborato di sistemi operativi (2022-23).
