@@ -1,4 +1,5 @@
 #include "libconnect4.h"
+#include "msgq_utils.h"
 #include "parse_args.h"
 #include "sem_utils.h"
 #include "shm_utils.h"
@@ -20,11 +21,16 @@ int main(const int argc, char *const argv[]) {
   fflush(stdout);
   sigint_attach_handler();
 
-  int sem_id, shm_id;
+  int msgq_id, sem_id, shm_id;
+
+  EXIT_ON_ERR(msgq_id = msgq_initialize());
 
   EXIT_ON_ERR(sem_id = sem_initialize());
   EXIT_ON_ERR(shm_id =
                   shm_initialize(cmd_args.grid_height, cmd_args.grid_width));
+
+  EXIT_ON_ERR(msgq_send_config(&cmd_args, shm_id, sem_id));
+  printf("Fatto!\nEcco l'ID di questa partita: %i \n", msgq_id);
 
   printf("In attesa che si connettano i due giocatori... ");
   EXIT_ON_ERR(sem_wait_players());
