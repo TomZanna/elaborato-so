@@ -1,5 +1,6 @@
 #include "libconnect4.h"
 #include "parse_args.h"
+#include "shm_utils.h"
 #include "sigint_utils.h"
 #include <stdio.h>
 
@@ -18,6 +19,27 @@ int main(const int argc, char *const argv[]) {
   fflush(stdout);
   sigint_attach_handler();
 
-  while (1)
-    ;
+  int shm_id;
+
+  EXIT_ON_ERR(shm_id =
+                  shm_initialize(cmd_args.grid_height, cmd_args.grid_width));
+
+  while (1) {
+    char winner = shm_check_game();
+
+    if (winner > 0 || shm_grid_full()) {
+      if (winner == cmd_args.token_player1) {
+        printf("vince 1\n");
+      } else if (winner == cmd_args.token_player1) {
+        printf("vince 2\n");
+      } else {
+        printf("pareggio\n");
+      }
+
+      // inizializzo la griglia di gioco
+      shm_reset_board();
+    }
+  }
+
+  return 0;
 }
