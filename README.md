@@ -31,8 +31,8 @@ Il progetto usa [meson](https://mesonbuild.com/) come build system. I file `meso
 - `P2TOKEN`: un carattere che rappresenta il simbolo assegnato al giocatore 2
 
 ### Client
-`connect4-client USERNAME GAMEKEY`
-- `GAMEKEY`: chiave generata dal server che identifica la partita
+`connect4-client USERNAME GAME_ID`
+- `GAME_ID`: id generato dal server che identifica la partita
 - `USERNAME`: username con cui sarà identificato il giocatore
 
 ## Architettura

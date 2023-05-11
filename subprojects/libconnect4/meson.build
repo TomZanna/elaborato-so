@@ -15,3 +15,21 @@ libconnect4_dep = declare_dependency(
     include_directories: inc,
     link_with: libconnect4,
 )
+
+tests = [
+    ['parse_uint', ['test/parse_uint.c', 'src/lib.c']],
+]
+
+foreach test : tests
+    test_name = test[0]
+    test_src = test[1]
+
+    test_exe = executable(
+        test_name,
+        test_src,
+        include_directories: inc,
+        dependencies: libconnect4_dep,
+    )
+
+    test(test_name, test_exe)
+endforeach
