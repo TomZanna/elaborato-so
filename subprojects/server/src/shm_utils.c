@@ -144,7 +144,7 @@ char check_back_diagonal(int width, int height, char (*grid)[width]) {
   return 0;
 }
 
-char shm_check_game() {
+char shm_check_game(void) {
   RETURN_IF_NONZERO(
       check_horizontal(config.grid_width, config.grid_height, config.addr));
   RETURN_IF_NONZERO(
