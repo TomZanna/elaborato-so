@@ -3,7 +3,8 @@
         "shared.h": "c",
         "stdio.h": "c",
         "stdlib.h": "c",
-        "ctype.h": "c"
+        "ctype.h": "c",
+        "msg.h": "c"
     },
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_fallbackStyle": "LLVM",

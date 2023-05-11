@@ -1,5 +1,6 @@
 #include "libconnect4.h"
 #include "parse_args.h"
+#include "sigint_utils.h"
 #include <stdio.h>
 
 int main(const int argc, char *const argv[]) {
@@ -13,5 +14,10 @@ int main(const int argc, char *const argv[]) {
          cmd_args.grid_width, cmd_args.grid_height, cmd_args.timeout,
          cmd_args.token_player1, cmd_args.token_player2);
 
-  return 0;
+  printf("Inizializzazione in corso... ");
+  fflush(stdout);
+  sigint_attach_handler();
+
+  while (1)
+    ;
 }
