@@ -9,7 +9,7 @@ int parse_uint(unsigned int *const output, const char *const string) {
   unsigned long result = strtoul(string, &parsed_string_end, 10);
 
   if (errno == ERANGE || result > UINT_MAX || *parsed_string_end != '\0')
-    return 1;
+    return -1;
 
   *output = (unsigned int)result;
   return 0;

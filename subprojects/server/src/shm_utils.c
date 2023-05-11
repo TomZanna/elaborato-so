@@ -41,7 +41,7 @@ int shm_initialize(const unsigned int height, const unsigned int width) {
   // registro callback da eseguire durante la terminazione del programma
   if (atexit(shm_teardown) < 0) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   config.id = shmget(IPC_PRIVATE, sizeof(char) * height * width,
@@ -49,14 +49,14 @@ int shm_initialize(const unsigned int height, const unsigned int width) {
 
   if (config.id == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   config.addr = shmat(config.id, NULL, 0);
 
   if (config.addr == (void *)-1) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   return 0;
@@ -72,7 +72,7 @@ int shm_grid_full(void) {
       return 0;
   }
 
-  return 1;
+  return -1;
 }
 
 void shm_reset_board(void) {

@@ -18,18 +18,18 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
     switch (c) {
     case 'h':
       fputs(HELP_OUTPUT_TEXT, stdout);
-      return 2;
+      return -2;
     case 's':
       output->single_player = 1; // gamemode
       break;
     default:
-      return 1;
+      return -1;
     }
 
   // parse degli args obbligatori
   if ((argc - optind) != 2) {
     fputs("Uso errato: lanciami con -h per ulteriori informazioni\n", stderr);
-    return 1;
+    return -1;
   }
 
   /* GAME_ID è l'id della coda di messaggi generato dalla syscall msgget.
@@ -38,7 +38,7 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
    */
   if (parse_uint(&output->game_id, argv[optind]) != 0) {
     fputs("GAME_ID deve essere un intero maggiore di 0\n", stderr);
-    return 1;
+    return -1;
   }
 
   return 0;

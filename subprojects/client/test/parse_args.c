@@ -11,7 +11,7 @@ void help_option_provided(void) {
 
   int ret_code = parse_args(&output, ARR_LENGHT(argv), argv);
 
-  assert(ret_code == 2); // help message printed, should return 2
+  assert(ret_code == -2); // help message printed, should return -2
 }
 
 void no_optional_argument_provided(void) {
@@ -41,7 +41,7 @@ void invalid_game_id(void) {
   char *const argv[] = {"client", "-s", "1a23", "user"};
   struct args output = {0};
 
-  assert(parse_args(&output, ARR_LENGHT(argv), argv) != 0);
+  assert(parse_args(&output, ARR_LENGHT(argv), argv) == -1);
 }
 
 void missing_username(void) {
@@ -49,7 +49,7 @@ void missing_username(void) {
   char *const argv[] = {"client", "-s", "123"};
   struct args output = {0};
 
-  assert(parse_args(&output, ARR_LENGHT(argv), argv) != 0);
+  assert(parse_args(&output, ARR_LENGHT(argv), argv) == -1);
 }
 
 int main(void) {

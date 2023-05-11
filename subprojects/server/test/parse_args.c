@@ -39,7 +39,7 @@ void help_option_provided(void) {
 
   int ret_code = parse_args(&output, ARR_LENGHT(argv), argv);
 
-  assert(ret_code == 2); // help message printed, should return 2
+  assert(ret_code == -2); // help message printed, should return -2
 }
 
 void invalid_grid_height(void) {
@@ -47,7 +47,7 @@ void invalid_grid_height(void) {
   char *const argv[] = {"server", "4", "5", "X", "O"};
   struct args output;
 
-  assert(parse_args(&output, ARR_LENGHT(argv), argv) == 1);
+  assert(parse_args(&output, ARR_LENGHT(argv), argv) == -1);
 }
 
 void invalid_grid_width(void) {
@@ -55,7 +55,7 @@ void invalid_grid_width(void) {
   char *const argv[] = {"server", "5", "4", "X", "O"};
   struct args output;
 
-  assert(parse_args(&output, ARR_LENGHT(argv), argv) == 1);
+  assert(parse_args(&output, ARR_LENGHT(argv), argv) == -1);
 }
 
 void invalid_player1_token(void) {
@@ -63,7 +63,7 @@ void invalid_player1_token(void) {
   char *const argv[] = {"server", "5", "5", "\n", "O"};
   struct args output;
 
-  assert(parse_args(&output, ARR_LENGHT(argv), argv) == 1);
+  assert(parse_args(&output, ARR_LENGHT(argv), argv) == -1);
 }
 
 void invalid_player2_token(void) {
@@ -71,7 +71,7 @@ void invalid_player2_token(void) {
   char *const argv[] = {"server", "5", "5", "X", "\t"};
   struct args output;
 
-  assert(parse_args(&output, ARR_LENGHT(argv), argv) == 1);
+  assert(parse_args(&output, ARR_LENGHT(argv), argv) == -1);
 }
 
 int main(void) {

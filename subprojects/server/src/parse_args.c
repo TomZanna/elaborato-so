@@ -29,21 +29,21 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
     switch (c) {
     case 'h':
       fputs(HELP_OUTPUT_TEXT, stdout);
-      return 2;
+      return -2;
     case 't':
       if (parse_uint(&output->timeout, optarg) != 0) {
         fprintf(stderr, "TIMEOUT deve essere un intero positivo\n");
-        return 1;
+        return -1;
       }
       break;
     default:
-      return 1;
+      return -1;
     }
 
   // parse degli args obbligatori
   if ((argc - optind) != 4) {
     fprintf(stderr, "Uso errato: lanciami con -h per ulteriori informazioni\n");
-    return 1;
+    return -1;
   }
 
   if (parse_uint(&output->grid_height, argv[optind]) != 0 ||
@@ -51,7 +51,7 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
     fprintf(
         stderr,
         "GRID_HEIGHT deve essere un intero positivo maggiore o uguale a 5\n");
-    return 1;
+    return -1;
   }
   optind++;
 
@@ -60,21 +60,21 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
     fprintf(
         stderr,
         "GRID_WIDTH deve essere un intero positivo maggiore o uguale a 5\n");
-    return 1;
+    return -1;
   }
   optind++;
 
   output->token_player1 = argv[optind][0];
   if (strlen(argv[optind]) != 1 || !isprint(output->token_player1)) {
     fprintf(stderr, "TOKEN_P1 deve essere un unico carattere stampabile\n");
-    return 1;
+    return -1;
   }
   optind++;
 
   output->token_player2 = argv[optind][0];
   if (strlen(argv[optind]) != 1 || !isprint(output->token_player2)) {
     fprintf(stderr, "TOKEN_P2 deve essere un unico carattere stampabile\n");
-    return 1;
+    return -1;
   }
 
   return 0;

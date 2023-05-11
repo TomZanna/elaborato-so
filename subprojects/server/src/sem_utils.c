@@ -19,7 +19,7 @@ int sem_initialize(void) {
   if (atexit(sem_teardown) < 0) {
     // se non riesco a registrate la funzione, fermo tutto
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   // 1 per la connessione + 2 a testa per sincronizzare turno/mossa
@@ -27,10 +27,10 @@ int sem_initialize(void) {
 
   if (sem_id == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
-  return 0;
+  return sem_id;
 }
 
 int sem_wait_players(void) {
@@ -47,7 +47,7 @@ int sem_wait_players(void) {
 
   if (ret == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   return 0;
@@ -63,7 +63,7 @@ int sem_signal_player(int player_number) {
 
   if (semop(sem_id, &sops, 1) == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   return 0;
@@ -85,7 +85,7 @@ int sem_wait_player(int player_number) {
 
   if (ret == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco: ");
-    return 1;
+    return -1;
   }
 
   return 0;
