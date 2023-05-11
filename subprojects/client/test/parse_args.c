@@ -7,7 +7,7 @@ extern int optind; // index used by getopt
 void help_option_provided(void) {
   optind = 1;
   char *const argv[] = {"client", "-h"};
-  struct args output;
+  struct args output = {0};
 
   int ret_code = parse_args(&output, ARR_LENGHT(argv), argv);
 
@@ -17,7 +17,7 @@ void help_option_provided(void) {
 void no_optional_argument_provided(void) {
   optind = 1;
   char *const argv[] = {"client", "123", "user"};
-  struct args output;
+  struct args output = {0};
 
   assert(parse_args(&output, ARR_LENGHT(argv), argv) == 0);
 
@@ -28,7 +28,7 @@ void no_optional_argument_provided(void) {
 void single_player_argument_provided(void) {
   optind = 1;
   char *const argv[] = {"client", "-s", "123", "user"};
-  struct args output;
+  struct args output = {0};
 
   assert(parse_args(&output, ARR_LENGHT(argv), argv) == 0);
 
@@ -39,7 +39,7 @@ void single_player_argument_provided(void) {
 void invalid_game_id(void) {
   optind = 1;
   char *const argv[] = {"client", "-s", "1a23", "user"};
-  struct args output;
+  struct args output = {0};
 
   assert(parse_args(&output, ARR_LENGHT(argv), argv) != 0);
 }
@@ -47,7 +47,7 @@ void invalid_game_id(void) {
 void missing_username(void) {
   optind = 1;
   char *const argv[] = {"client", "-s", "123"};
-  struct args output;
+  struct args output = {0};
 
   assert(parse_args(&output, ARR_LENGHT(argv), argv) != 0);
 }

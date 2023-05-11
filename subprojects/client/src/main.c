@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int main(const int argc, char *const argv[]) {
-  struct args cmd_args;
+  struct args cmd_args = {0};
 
   EXIT_ON_ERR(parse_args(&cmd_args, argc, argv));
 
