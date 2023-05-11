@@ -1,5 +1,6 @@
 #include "libconnect4.h"
 #include "parse_args.h"
+#include "sem_utils.h"
 #include "shm_utils.h"
 #include "sigint_utils.h"
 #include <stdio.h>
@@ -19,12 +20,25 @@ int main(const int argc, char *const argv[]) {
   fflush(stdout);
   sigint_attach_handler();
 
-  int shm_id;
+  int sem_id, shm_id;
 
+  EXIT_ON_ERR(sem_id = sem_initialize());
   EXIT_ON_ERR(shm_id =
                   shm_initialize(cmd_args.grid_height, cmd_args.grid_width));
 
+  printf("In attesa che si connettano i due giocatori... ");
+  EXIT_ON_ERR(sem_wait_players());
+  printf("possiamo cominciare!\n");
+
+  int player_turn = 0;
   while (1) {
+    // sblocco uno dei due giocatori
+    EXIT_ON_ERR(sem_signal_player(player_turn));
+
+    // aspetto la mossa del giocatore
+    EXIT_ON_ERR(sem_wait_player(player_turn));
+
+    // controllo se uno dei due ha vinto
     char winner = shm_check_game();
 
     if (winner > 0 || shm_grid_full()) {
@@ -39,6 +53,9 @@ int main(const int argc, char *const argv[]) {
       // inizializzo la griglia di gioco
       shm_reset_board();
     }
+
+    // ora tocca all'altro giocatore
+    player_turn = (player_turn + 1) % 2;
   }
 
   return 0;
