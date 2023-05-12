@@ -1,4 +1,5 @@
 #include "libconnect4.h"
+#include "msgq_utils.h"
 #include "parse_args.h"
 #include <stdio.h>
 
@@ -7,7 +8,12 @@ int main(const int argc, char *const argv[]) {
 
   EXIT_ON_ERR(parse_args(&cmd_args, argc, argv));
 
-  printf("GAME_ID: %i\t SINGLE_PLAYER: %i\n", cmd_args.game_id,
-         cmd_args.single_player);
+  struct msgq_config config;
+
+  fputs("Connessione in corso... ", stdout);
+  fflush(stdout);
+  EXIT_ON_ERR(msgq_get_config(cmd_args.game_id, &config));
+  fputs("Connesso!\n", stdout);
+
   return 0;
 }

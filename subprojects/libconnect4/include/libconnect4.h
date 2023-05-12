@@ -4,6 +4,8 @@
   if ((func) < 0)                                                              \
     exit(EXIT_FAILURE);
 
+#ifndef LIBCONNECT4_STRUCTS_GUARD
+#define LIBCONNECT4_STRUCTS_GUARD
 struct msgq_config {
   long mtype;
   int shm_id;
@@ -15,6 +17,7 @@ struct msgq_config {
   int grid_width;
   int grid_height;
 };
+#endif
 
 #define MSGQ_CONFIG_MTYPE 1
 #define MSGQ_CONFIG_SIZE sizeof(struct msgq_config) - sizeof(long)

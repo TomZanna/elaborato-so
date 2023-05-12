@@ -7,7 +7,7 @@ project(
 
 inc = include_directories('include')
 
-src = ['src/main.c', 'src/parse_args.c']
+src = ['src/main.c', 'src/parse_args.c', 'src/msgq_utils.c']
 
 libconnect4_proj = subproject('libconnect4')
 libconnect4_dep = libconnect4_proj.get_variable('libconnect4_dep')
