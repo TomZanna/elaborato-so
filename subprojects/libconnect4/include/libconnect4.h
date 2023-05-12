@@ -5,7 +5,7 @@
     exit(EXIT_FAILURE);
 
 struct msgq_config {
-  int mtype;
+  long mtype;
   int shm_id;
   int sem_id;
   int server_pid;
@@ -15,5 +15,8 @@ struct msgq_config {
   int grid_width;
   int grid_height;
 };
+
+#define MSGQ_CONFIG_MTYPE 1
+#define MSGQ_CONFIG_SIZE sizeof(struct msgq_config) - sizeof(long)
 
 int parse_uint(unsigned int *const, const char *const);

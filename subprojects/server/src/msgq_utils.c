@@ -8,8 +8,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define MSGQ_CONFIG_MTYPE 1
-
 int msgq_id = -1;
 
 void msgq_teardown(void) {
@@ -52,7 +50,7 @@ int msgq_send_config(const struct args *const args, const int shm_id,
     game_config.player_token =
         i == 0 ? args->token_player1 : args->token_player2;
 
-    if (msgsnd(msgq_id, &game_config, sizeof(game_config), 0)) {
+    if (msgsnd(msgq_id, &game_config, MSGQ_CONFIG_SIZE, 0)) {
       perror("Errore nell'inizializzazione del campo di gioco:");
       return -1;
     }
