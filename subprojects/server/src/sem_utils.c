@@ -1,4 +1,5 @@
 #include "sem_utils.h"
+#include "libconnect4.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,8 +7,6 @@
 #include <sys/stat.h>
 
 int sem_id = -1;
-
-int sem_getnum(int player_num) { return (player_num * 2) + 1; }
 
 void sem_teardown(void) {
   if (sem_id != -1)

@@ -23,3 +23,5 @@ struct msgq_config {
 #define MSGQ_CONFIG_SIZE sizeof(struct msgq_config) - sizeof(long)
 
 int parse_uint(unsigned int *const, const char *const);
+
+int sem_getnum(int player_num);
