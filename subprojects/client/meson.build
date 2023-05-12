@@ -12,6 +12,7 @@ src = [
     'src/parse_args.c',
     'src/msgq_utils.c',
     'src/sem_utils.c',
+    'src/shm_utils.c',
 ]
 
 libconnect4_proj = subproject('libconnect4')
