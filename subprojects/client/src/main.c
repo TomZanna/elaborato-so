@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-void sigalrm_handler(int signal) {
+void sigalrm_handler(__attribute__((unused)) int signal) {
   fputs("Tempo scaduto! Il turno passa all'avversario.\n", stdout);
 }
 
@@ -38,7 +38,7 @@ int main(const int argc, char *const argv[]) {
   while (1) {
     EXIT_ON_ERR(sem_wait_turn());
 
-    printf("\e[1;1H\e[2J"); // clear screen
+    printf("\033[1;1H\033[2J"); // clear screen
     if (config.timeout) {
       signal(SIGALRM, sigalrm_handler);
       alarm(config.timeout);
@@ -61,7 +61,7 @@ int main(const int argc, char *const argv[]) {
         }
       }
 
-      printf("\e[1;1H\e[2J"); // clear screen
+      printf("\033[1;1H\033[2J"); // clear screen
 
       buffer[strcspn(buffer, "\n")] = 0;
       if (parse_uint(&output, buffer) == -1 || output < 1 ||

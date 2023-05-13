@@ -13,9 +13,9 @@ struct msgq_config {
   int server_pid;
   char player_token;
   int player_number;
-  int timeout;
-  int grid_width;
-  int grid_height;
+  unsigned int timeout;
+  unsigned int grid_width;
+  unsigned int grid_height;
 };
 #endif
 
