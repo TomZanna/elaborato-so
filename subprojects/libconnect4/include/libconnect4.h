@@ -25,3 +25,7 @@ struct msgq_config {
 int parse_uint(unsigned int *const, const char *const);
 
 int sem_getnum(int player_num);
+
+int sem_lib_wait(int sem_id, int sem_num, int sem_op);
+
+int sem_lib_signal(int sem_id, int sem_num, int sem_op);

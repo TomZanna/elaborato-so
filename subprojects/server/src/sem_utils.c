@@ -17,7 +17,7 @@ int sem_initialize(void) {
   // registro callback da eseguire durante la terminazione del programma
   if (atexit(sem_teardown) < 0) {
     // se non riesco a registrate la funzione, fermo tutto
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 
@@ -25,7 +25,7 @@ int sem_initialize(void) {
   sem_id = semget(IPC_PRIVATE, 6, S_IRWXU | S_IRWXG | S_IRWXO);
 
   if (sem_id == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 
@@ -33,19 +33,9 @@ int sem_initialize(void) {
 }
 
 int sem_wait_ready(void) {
-  struct sembuf sops;
-  sops.sem_num = 0;
-  sops.sem_op = -2; // aspetto entrambi i giocatori
-  sops.sem_flg = 0;
-
-  // se vengo risvegliato da un interrupt, torno in attesa
-  int ret;
-  do {
-    ret = semop(sem_id, &sops, 1);
-  } while (ret == -1 && errno == EINTR);
-
-  if (ret == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+  // aspetto entrambi i giocatori
+  if (sem_lib_wait(sem_id, 0, -2) == -1) {
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 
@@ -53,15 +43,9 @@ int sem_wait_ready(void) {
 }
 
 int sem_signal_start(void) {
-  struct sembuf sops;
-
-  // il primo giocatore si sincronizza sul semaforo 1
-  sops.sem_num = 1;
-  sops.sem_op = 2;
-  sops.sem_flg = 0;
-
-  if (semop(sem_id, &sops, 1) == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+  // sblocco i giocatori in attesa
+  if (sem_lib_signal(sem_id, 1, 2) == -1) {
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 
@@ -69,15 +53,9 @@ int sem_signal_start(void) {
 }
 
 int sem_signal_turn(int player_number) {
-  struct sembuf sops;
-
-  // il primo giocatore si sincronizza sul semaforo 1
-  sops.sem_num = sem_getnum(player_number);
-  sops.sem_op = 1;
-  sops.sem_flg = 0;
-
-  if (semop(sem_id, &sops, 1) == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+  // sblocco il giocatore affichè possa fare la sua mossa
+  if (sem_lib_signal(sem_id, sem_getnum(player_number), 1) == -1) {
+    perror("Errore durante l'arbitraggio della partita");
     return -1;
   }
 
@@ -85,21 +63,9 @@ int sem_signal_turn(int player_number) {
 }
 
 int sem_wait_move(int player_number) {
-  struct sembuf sops;
-
-  // il primo giocatore mi sbloccherà tramite il semaforo 2
-  sops.sem_num = sem_getnum(player_number) + 1;
-  sops.sem_op = -1;
-  sops.sem_flg = 0;
-
-  // se vengo risvegliato da un interrupt, torno in attesa
-  int ret;
-  do {
-    ret = semop(sem_id, &sops, 1);
-  } while (ret == -1 && errno == EINTR);
-
-  if (ret == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+  // attendo la giocata del giocatore
+  if (sem_lib_wait(sem_id, sem_getnum(player_number) + 1, -1) == -1) {
+    perror("Errore durante l'arbitraggio della partita");
     return -1;
   }
 

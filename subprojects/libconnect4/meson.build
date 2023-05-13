@@ -7,7 +7,7 @@ project(
 
 inc = include_directories('include')
 
-src = ['src/lib.c']
+src = ['src/lib.c', 'src/sem_utils.c']
 
 libconnect4 = static_library('libconnect4', src, include_directories: inc)
 
