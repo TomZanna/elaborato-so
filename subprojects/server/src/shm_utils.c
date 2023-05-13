@@ -79,9 +79,9 @@ void shm_reset_board(void) {
   memset(config.addr, 0, config.grid_height * config.grid_width * sizeof(char));
 }
 
-char check_horizontal(int width, int height, char (*grid)[height]) {
-  for (int i = 0; i < width; i++) {
-    for (int j = 0; j <= height - 4; j++) {
+char _check_horizontal(int width, int height, char (*grid)[height]) {
+  for (int i = 0; i <= width - 4; i++) {
+    for (int j = 0; j < height; j++) {
       if (grid[i][j] == 0)
         continue;
 
@@ -95,7 +95,7 @@ char check_horizontal(int width, int height, char (*grid)[height]) {
   return 0;
 }
 
-char check_vertical(int width, int height, char (*grid)[height]) {
+char _check_vertical(int width, int height, char (*grid)[height]) {
   for (int i = 0; i < width; i++) {
     for (int j = 0; j <= height - 4; j++) {
       if (grid[i][j] == 0)
@@ -111,7 +111,7 @@ char check_vertical(int width, int height, char (*grid)[height]) {
   return 0;
 }
 
-char check_diagonal(int width, int height, char (*grid)[height]) {
+char _check_diagonal(int width, int height, char (*grid)[height]) {
   for (int i = 0; i <= width - 4; i++) {
     for (int j = height - 1; j >= 3; j--) {
       if (grid[i][j] == 0)
@@ -127,7 +127,7 @@ char check_diagonal(int width, int height, char (*grid)[height]) {
   return 0;
 }
 
-char check_back_diagonal(int width, int height, char (*grid)[height]) {
+char _check_back_diagonal(int width, int height, char (*grid)[height]) {
   for (int i = 0; i <= width - 4; i++) {
     for (int j = 0; j <= height - 4; j++) {
       if (grid[i][j] == 0)
@@ -146,13 +146,13 @@ char check_back_diagonal(int width, int height, char (*grid)[height]) {
 
 char shm_check_game(void) {
   RETURN_IF_NONZERO(
-      check_horizontal(config.grid_width, config.grid_height, config.addr));
+      _check_horizontal(config.grid_width, config.grid_height, config.addr));
   RETURN_IF_NONZERO(
-      check_vertical(config.grid_width, config.grid_height, config.addr));
+      _check_vertical(config.grid_width, config.grid_height, config.addr));
   RETURN_IF_NONZERO(
-      check_diagonal(config.grid_width, config.grid_height, config.addr));
+      _check_diagonal(config.grid_width, config.grid_height, config.addr));
   RETURN_IF_NONZERO(
-      check_back_diagonal(config.grid_width, config.grid_height, config.addr));
+      _check_back_diagonal(config.grid_width, config.grid_height, config.addr));
 
   return 0;
 }

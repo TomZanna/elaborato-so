@@ -31,6 +31,9 @@ test('basic', exe, should_fail: true)
 
 tests = [
     ['parse_args', ['test/parse_args.c', 'src/parse_args.c']],
+    ['grid_check_v', ['test/check_vertical.c', 'src/shm_utils.c']],
+    ['grid_check_h', ['test/check_horizontal.c', 'src/shm_utils.c']],
+    ['grid_check_d', ['test/check_diagonal.c', 'src/shm_utils.c']],
 ]
 
 foreach test : tests
