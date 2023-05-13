@@ -15,4 +15,4 @@ int parse_uint(unsigned int *const output, const char *const string) {
   return 0;
 }
 
-int sem_getnum(int player_num) { return (player_num * 2) + 1; }
+int sem_getnum(int player_num) { return (player_num + 1) * 2; }

@@ -13,7 +13,7 @@ void sem_config(int new_sem_id, int new_player_number) {
   return;
 }
 
-int sem_signal_players(void) {
+int sem_signal_ready(void) {
   struct sembuf sops;
 
   // il server si sincronizza per la connessione sul semaforo 0
@@ -29,7 +29,27 @@ int sem_signal_players(void) {
   return 0;
 }
 
-int sem_wait_server(void) {
+int sem_wait_start(void) {
+  struct sembuf sops;
+
+  sops.sem_num = 1;
+  sops.sem_op = -1;
+  sops.sem_flg = 0;
+
+  int ret;
+  do {
+    ret = semop(sem_id, &sops, 1);
+  } while (ret == -1 && errno == EINTR);
+
+  if (ret == -1) {
+    perror("Errore di sincronizzazione: ");
+    return -1;
+  }
+
+  return 0;
+}
+
+int sem_wait_turn(void) {
   struct sembuf sops;
 
   // il primo giocatore aspetta sul semaforo 1
@@ -51,7 +71,7 @@ int sem_wait_server(void) {
   return 0;
 }
 
-int sem_signal_server(void) {
+int sem_signal_move(void) {
   struct sembuf sops;
 
   // il server aspetta il primo giocatore sul semaforo 1

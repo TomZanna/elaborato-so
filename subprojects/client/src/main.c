@@ -30,12 +30,14 @@ int main(const int argc, char *const argv[]) {
   fputs("Connesso!\nIn attesa dell'avversario... ", stdout);
   fflush(stdout);
 
-  sem_signal_players();
-  EXIT_ON_ERR(sem_wait_server());
+  EXIT_ON_ERR(sem_signal_ready());
+  EXIT_ON_ERR(sem_wait_start());
 
   fputs("eccolo! Che la sfida abbia inizio\n", stdout);
 
   while (1) {
+    EXIT_ON_ERR(sem_wait_turn());
+
     printf("\e[1;1H\e[2J"); // clear screen
     if (config.timeout) {
       signal(SIGALRM, sigalrm_handler);
@@ -50,14 +52,20 @@ int main(const int argc, char *const argv[]) {
       fputs("Digitare il numero della colonna in cui inserire il gettone: ",
             stdout);
 
-      if (fgets(buffer, sizeof(buffer), stdin) == NULL && errno == EINTR) {
-        break;
+      if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        if (errno == EINTR)
+          break;
+        else {
+          perror("Errore durante l'acquisizione");
+          EXIT_ON_ERR(-1);
+        }
       }
 
       printf("\e[1;1H\e[2J"); // clear screen
 
       buffer[strcspn(buffer, "\n")] = 0;
-      if (parse_uint(&output, buffer) == -1 || output > config.grid_width) {
+      if (parse_uint(&output, buffer) == -1 || output < 1 ||
+          output > config.grid_width) {
         fputs("Input non valido!\n", stdout);
       } else if (shm_input_valid(output - 1) == -1) {
         fputs("La colonna selezionata è piena\n", stdout);
@@ -70,9 +78,7 @@ int main(const int argc, char *const argv[]) {
 
     shm_print_grid();
 
-    EXIT_ON_ERR(sem_signal_server());
-
-    EXIT_ON_ERR(sem_wait_server());
+    EXIT_ON_ERR(sem_signal_move());
   }
 
   return 0;

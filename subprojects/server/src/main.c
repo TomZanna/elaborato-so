@@ -33,16 +33,18 @@ int main(const int argc, char *const argv[]) {
   printf("Fatto!\nEcco l'ID di questa partita: %i \n", msgq_id);
 
   printf("In attesa che si connettano i due giocatori... ");
-  EXIT_ON_ERR(sem_wait_players());
+  fflush(stdout);
+  EXIT_ON_ERR(sem_wait_ready());
+  EXIT_ON_ERR(sem_signal_start());
   printf("possiamo cominciare!\n");
 
-  int player_turn = 0;
+  int player_turn = 1; // inizia il secondo (ultimo connesso)
   while (1) {
     // sblocco uno dei due giocatori
-    EXIT_ON_ERR(sem_signal_player(player_turn));
+    EXIT_ON_ERR(sem_signal_turn(player_turn));
 
     // aspetto la mossa del giocatore
-    EXIT_ON_ERR(sem_wait_player(player_turn));
+    EXIT_ON_ERR(sem_wait_move(player_turn));
 
     // controllo se uno dei due ha vinto
     char winner = shm_check_game();
