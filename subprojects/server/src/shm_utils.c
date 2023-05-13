@@ -59,12 +59,12 @@ int shm_initialize(const unsigned int height, const unsigned int width) {
     return -1;
   }
 
-  return 0;
+  return config.id;
 }
 
 int shm_grid_full(void) {
   int width = config.grid_width, height = config.grid_height;
-  char(*grid)[width] = config.addr;
+  char(*grid)[height] = config.addr;
 
   for (int i = 0; i < width - 1; i++) {
     // check if there is an empty column, i.e. the last element is 0
@@ -72,14 +72,14 @@ int shm_grid_full(void) {
       return 0;
   }
 
-  return -1;
+  return 1;
 }
 
 void shm_reset_board(void) {
-  memset(config.addr, 0, config.grid_height * config.grid_width);
+  memset(config.addr, 0, config.grid_height * config.grid_width * sizeof(char));
 }
 
-char check_horizontal(int width, int height, char (*grid)[width]) {
+char check_horizontal(int width, int height, char (*grid)[height]) {
   for (int i = 0; i < width; i++) {
     for (int j = 0; j <= height - 4; j++) {
       if (grid[i][j] == 0)
@@ -95,7 +95,7 @@ char check_horizontal(int width, int height, char (*grid)[width]) {
   return 0;
 }
 
-char check_vertical(int width, int height, char (*grid)[width]) {
+char check_vertical(int width, int height, char (*grid)[height]) {
   for (int i = 0; i < width; i++) {
     for (int j = 0; j <= height - 4; j++) {
       if (grid[i][j] == 0)
@@ -111,7 +111,7 @@ char check_vertical(int width, int height, char (*grid)[width]) {
   return 0;
 }
 
-char check_diagonal(int width, int height, char (*grid)[width]) {
+char check_diagonal(int width, int height, char (*grid)[height]) {
   for (int i = 0; i <= width - 4; i++) {
     for (int j = height - 1; j >= 3; j--) {
       if (grid[i][j] == 0)
@@ -127,7 +127,7 @@ char check_diagonal(int width, int height, char (*grid)[width]) {
   return 0;
 }
 
-char check_back_diagonal(int width, int height, char (*grid)[width]) {
+char check_back_diagonal(int width, int height, char (*grid)[height]) {
   for (int i = 0; i <= width - 4; i++) {
     for (int j = 0; j <= height - 4; j++) {
       if (grid[i][j] == 0)

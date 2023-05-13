@@ -50,7 +50,7 @@ int main(const int argc, char *const argv[]) {
     if (winner > 0 || shm_grid_full()) {
       if (winner == cmd_args.token_player1) {
         printf("vince 1\n");
-      } else if (winner == cmd_args.token_player1) {
+      } else if (winner == cmd_args.token_player2) {
         printf("vince 2\n");
       } else {
         printf("pareggio\n");
