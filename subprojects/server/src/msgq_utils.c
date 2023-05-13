@@ -107,6 +107,24 @@ int msgq_send_tie() {
   return 0;
 }
 
+int msgq_send_abandoned(int player_number) {
+  static struct msgq_status tmp_msg = {0};
+
+  int i = (player_number + 1) % 2;
+
+  tmp_msg.mtype = players_pid[i];
+  tmp_msg.result = ABANDONED;
+
+  if (msgsnd(msgq_id, &tmp_msg, MSGQ_STRUCT_SIZE(tmp_msg), 0)) {
+    perror("Errore di comunicazione");
+    return -1;
+  }
+
+  kill(tmp_msg.mtype, MSGQ_STATUS_SIGNAL);
+
+  return 0;
+}
+
 void msgq_send_exit_status(void) {
   for (int i = 0; i < 2; i++) {
     if (players_pid[i] != -1) {
@@ -129,7 +147,8 @@ void msgq_handle_new_feedback(int sig) {
   if (tmp_msg.status == HELO) {
     players_pid[tmp_msg.client_num] = tmp_msg.client_pid;
   } else if (tmp_msg.status == LEAVING) {
-    players_pid[tmp_msg.client_num] = -1;
+    msgq_send_abandoned(tmp_msg.client_num);
+    sleep(2);
     exit(0);
   }
 }

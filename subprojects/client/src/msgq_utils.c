@@ -7,6 +7,8 @@
 #include <unistd.h>
 
 int msgq_id = -1;
+int player_num = -1;
+int server_pid = -1;
 
 int msgq_get_config(const int game_id, struct msgq_config *const config) {
   msgq_id = game_id;
@@ -28,6 +30,9 @@ int msgq_get_config(const int game_id, struct msgq_config *const config) {
     }
     return -1;
   }
+
+  server_pid = config->server_pid;
+  player_num = config->player_number;
 
   struct msgq_feedback feedback;
   feedback.mtype = MSGQ_FEEDBACK_MTYPE;
@@ -94,4 +99,21 @@ void msgq_handle_new_status(int sig) {
 
 void msgq_attach_handler(void) {
   signal(MSGQ_STATUS_SIGNAL, msgq_handle_new_status);
+}
+
+void msgq_send_leaving(int sig) {
+  struct msgq_feedback feedback;
+  feedback.mtype = MSGQ_FEEDBACK_MTYPE;
+  feedback.status = LEAVING;
+  feedback.client_num = player_num;
+  feedback.client_pid = getpid();
+
+  if (msgsnd(msgq_id, &feedback, MSGQ_STRUCT_SIZE(feedback), 0) == -1) {
+    perror("Errore durante la chiusura");
+    EXIT_ON_ERR(-1);
+  }
+
+  kill(server_pid, MSGQ_FEEDBACK_SIGNAL);
+
+  exit(0);
 }

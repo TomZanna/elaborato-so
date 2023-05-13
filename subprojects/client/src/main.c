@@ -21,11 +21,14 @@ void close_match(__attribute__((unused)) int sig) {
   exit(EXIT_SUCCESS);
 }
 
+void msgq_send_leaving(int sig);
+
 int main(const int argc, char *const argv[]) {
   srand(time(NULL));
 
   msgq_attach_handler();
   signal(SERVER_CLOSED_SIGNAL, close_match);
+  signal(SIGINT, msgq_send_leaving);
 
   struct args cmd_args = {0};
 
