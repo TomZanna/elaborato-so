@@ -13,7 +13,15 @@ void sigalrm_handler(__attribute__((unused)) int signal) {
   fputs("Tempo scaduto! Il turno passa all'avversario.\n", stdout);
 }
 
+void close_match(__attribute__((unused)) int sig) {
+  printf("\nIl server ha ordinato la chiusura della partita\n");
+  exit(EXIT_SUCCESS);
+}
+
 int main(const int argc, char *const argv[]) {
+  msgq_attach_handler();
+  signal(SERVER_CLOSED_SIGNAL, close_match);
+
   struct args cmd_args = {0};
 
   EXIT_ON_ERR(parse_args(&cmd_args, argc, argv));

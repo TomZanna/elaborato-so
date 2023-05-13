@@ -32,6 +32,8 @@ int main(const int argc, char *const argv[]) {
   EXIT_ON_ERR(msgq_send_config(&cmd_args, shm_id, sem_id));
   printf("Fatto!\nEcco l'ID di questa partita: %i \n", msgq_id);
 
+  msgq_attach_handler();
+
   printf("In attesa che si connettano i due giocatori... ");
   fflush(stdout);
   EXIT_ON_ERR(sem_wait_ready());
@@ -51,11 +53,11 @@ int main(const int argc, char *const argv[]) {
 
     if (winner > 0 || shm_grid_full()) {
       if (winner == cmd_args.token_player1) {
-        printf("vince 1\n");
+        msgq_send_win(0);
       } else if (winner == cmd_args.token_player2) {
-        printf("vince 2\n");
+        msgq_send_win(1);
       } else {
-        printf("pareggio\n");
+        msgq_send_tie();
       }
 
       // inizializzo la griglia di gioco

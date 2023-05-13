@@ -1,4 +1,5 @@
 #include "sigint_utils.h"
+#include "msgq_utils.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +31,7 @@ void sigint_handler(int signum) {
            "tutti!\n",
            MAX_KEY_PRESS);
 
+    msgq_send_exit_status();
     exit(0);
   }
 }

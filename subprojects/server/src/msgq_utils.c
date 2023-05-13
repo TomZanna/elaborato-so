@@ -4,11 +4,15 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/msg.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 int msgq_id = -1;
+int players_pid[2] = {-1};
+
+void msgq_handle_new_feedback(int sig);
 
 void msgq_teardown(void) {
   if (msgq_id != -1)
@@ -45,16 +49,90 @@ int msgq_send_config(const struct args *const args, const int shm_id,
       .shm_id = shm_id,
   };
 
+  signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_feedback);
+
   for (int i = 0; i < 2; i++) {
     game_config.player_number = i;
     game_config.player_token =
         i == 0 ? args->token_player1 : args->token_player2;
 
-    if (msgsnd(msgq_id, &game_config, MSGQ_CONFIG_SIZE, 0)) {
-      perror("Errore nell'inizializzazione del campo di gioco:");
+    if (msgsnd(msgq_id, &game_config, MSGQ_STRUCT_SIZE(game_config), 0)) {
+      perror("Errore nell'inizializzazione del campo di gioco");
       return -1;
     }
   }
 
   return 0;
+}
+
+int msgq_send_win(int player_number) {
+  static struct msgq_status tmp_msg = {0};
+
+  for (int i = 0; i < 2; i++) {
+    tmp_msg.mtype = players_pid[i];
+
+    if (i == player_number)
+      tmp_msg.result = WIN;
+    else
+      tmp_msg.result = LOSE;
+
+    if (msgsnd(msgq_id, &tmp_msg, MSGQ_STRUCT_SIZE(tmp_msg), 0)) {
+      perror("Errore di comunicazione");
+      return -1;
+    }
+
+    kill(tmp_msg.mtype, MSGQ_STATUS_SIGNAL);
+  }
+
+  return 0;
+}
+
+int msgq_send_tie() {
+  static struct msgq_status tmp_msg = {0};
+
+  tmp_msg.result = TIE; // tie
+
+  for (int i = 0; i < 2; i++) {
+    tmp_msg.mtype = players_pid[i];
+
+    if (msgsnd(msgq_id, &tmp_msg, MSGQ_STRUCT_SIZE(tmp_msg), 0)) {
+      perror("Errore di comunicazione");
+      return -1;
+    }
+
+    kill(tmp_msg.mtype, MSGQ_STATUS_SIGNAL);
+  }
+
+  return 0;
+}
+
+void msgq_send_exit_status(void) {
+  for (int i = 0; i < 2; i++) {
+    if (players_pid[i] != -1) {
+      kill(players_pid[i], SERVER_CLOSED_SIGNAL);
+    }
+  }
+}
+
+void msgq_handle_new_feedback(int sig) {
+  struct msgq_feedback tmp_msg;
+
+  signal(sig, msgq_handle_new_feedback);
+
+  if (msgrcv(msgq_id, &tmp_msg, MSGQ_STRUCT_SIZE(tmp_msg), MSGQ_FEEDBACK_MTYPE,
+             IPC_NOWAIT) == -1) {
+    perror("Errore di comunicazione");
+    EXIT_ON_ERR(-1);
+  };
+
+  if (tmp_msg.status == HELO) {
+    players_pid[tmp_msg.client_num] = tmp_msg.client_pid;
+  } else if (tmp_msg.status == LEAVING) {
+    players_pid[tmp_msg.client_num] = -1;
+    exit(0);
+  }
+}
+
+void msgq_attach_handler(void) {
+  signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_feedback);
 }

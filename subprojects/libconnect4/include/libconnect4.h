@@ -1,3 +1,5 @@
+#define _POSIX_SOURCE
+#include <signal.h>
 #include <stdlib.h>
 
 #define EXIT_ON_ERR(func)                                                      \
@@ -17,10 +19,30 @@ struct msgq_config {
   unsigned int grid_width;
   unsigned int grid_height;
 };
+
+struct msgq_status {
+  long mtype;
+  enum match_result { TIE, LOSE, WIN, ABANDONED } result;
+};
+
+struct msgq_feedback {
+  long mtype;
+  int client_pid;
+  int client_num;
+  enum client_status { HELO, LEAVING } status;
+};
+
 #endif
 
 #define MSGQ_CONFIG_MTYPE 1
-#define MSGQ_CONFIG_SIZE sizeof(struct msgq_config) - sizeof(long)
+#define MSGQ_FEEDBACK_MTYPE 2
+#define MSGQ_STRUCT_SIZE(in_struct)                                            \
+  sizeof(in_struct) - sizeof((in_struct).mtype)
+
+#define MSGQ_FEEDBACK_SIGNAL SIGUSR1
+#define MSGQ_STATUS_SIGNAL SIGUSR1
+#define SERVER_CLOSED_SIGNAL SIGUSR2
+#define RANDOM_CLIENT_SIGNAL SIGUSR2
 
 int parse_uint(unsigned int *const, const char *const);
 
