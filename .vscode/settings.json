@@ -4,7 +4,9 @@
         "stdio.h": "c",
         "stdlib.h": "c",
         "ctype.h": "c",
-        "msg.h": "c"
+        "msg.h": "c",
+        "algorithm": "c",
+        "format": "c"
     },
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_fallbackStyle": "LLVM",

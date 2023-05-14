@@ -7,7 +7,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
+
+int random_mode = 0;
 
 void sigalrm_handler(__attribute__((unused)) int signal) {
   fputs("Tempo scaduto! Il turno passa all'avversario.\n", stdout);
@@ -19,6 +22,8 @@ void close_match(__attribute__((unused)) int sig) {
 }
 
 int main(const int argc, char *const argv[]) {
+  srand(time(NULL));
+
   msgq_attach_handler();
   signal(SERVER_CLOSED_SIGNAL, close_match);
 
@@ -35,6 +40,12 @@ int main(const int argc, char *const argv[]) {
   EXIT_ON_ERR(shm_attach(config.shm_id, config.grid_width, config.grid_height,
                          config.player_token));
 
+  if (config.server_pid == getppid())
+    random_mode = 1;
+  else if (cmd_args.single_player) {
+    kill(config.server_pid, RANDOM_CLIENT_SIGNAL);
+  }
+
   fputs("Connesso!\nIn attesa dell'avversario... ", stdout);
   fflush(stdout);
 
@@ -46,45 +57,52 @@ int main(const int argc, char *const argv[]) {
   while (1) {
     EXIT_ON_ERR(sem_wait_turn());
 
-    printf("\033[1;1H\033[2J"); // clear screen
-    if (config.timeout) {
-      signal(SIGALRM, sigalrm_handler);
-      alarm(config.timeout);
-    }
-
-    unsigned int output;
-    while (1) {
-      char buffer[5];
-      shm_print_grid();
-
-      fputs("Digitare il numero della colonna in cui inserire il gettone: ",
-            stdout);
-
-      if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-        if (errno == EINTR)
-          break;
-        else {
-          perror("Errore durante l'acquisizione");
-          EXIT_ON_ERR(-1);
-        }
+    if (random_mode) {
+      int output;
+      do {
+        output = (rand() % config.grid_width) + 1;
+      } while (shm_input_valid(output - 1) == -1);
+    } else {
+      printf("\033[1;1H\033[2J"); // clear screen
+      if (config.timeout) {
+        signal(SIGALRM, sigalrm_handler);
+        alarm(config.timeout);
       }
 
-      printf("\033[1;1H\033[2J"); // clear screen
+      unsigned int output;
+      while (1) {
+        char buffer[5];
+        shm_print_grid();
 
-      buffer[strcspn(buffer, "\n")] = 0;
-      if (parse_uint(&output, buffer) == -1 || output < 1 ||
-          output > config.grid_width) {
-        fputs("Input non valido!\n", stdout);
-      } else if (shm_input_valid(output - 1) == -1) {
-        fputs("La colonna selezionata è piena\n", stdout);
-      } else
-        break;
+        fputs("Digitare il numero della colonna in cui inserire il gettone: ",
+              stdout);
+
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+          if (errno == EINTR)
+            break;
+          else {
+            perror("Errore durante l'acquisizione");
+            EXIT_ON_ERR(-1);
+          }
+        }
+
+        printf("\033[1;1H\033[2J"); // clear screen
+
+        buffer[strcspn(buffer, "\n")] = 0;
+        if (parse_uint(&output, buffer) == -1 || output < 1 ||
+            output > config.grid_width) {
+          fputs("Input non valido!\n", stdout);
+        } else if (shm_input_valid(output - 1) == -1) {
+          fputs("La colonna selezionata è piena\n", stdout);
+        } else
+          break;
+      }
+
+      if (config.timeout)
+        alarm(0);
+
+      shm_print_grid();
     }
-
-    if (config.timeout)
-      alarm(0);
-
-    shm_print_grid();
 
     EXIT_ON_ERR(sem_signal_move());
   }

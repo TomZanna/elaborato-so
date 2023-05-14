@@ -84,10 +84,12 @@ void msgq_handle_new_status(int sig) {
     break;
   }
 
-  printf("\nPremi ENTER per iniziare la prossima partita");
-  while (getchar() != '\n')
-    ;
-  printf("La partita inizierà a breve!\n");
+  if (!random_mode) {
+    printf("\nPremi ENTER per iniziare la prossima partita");
+    while (getchar() != '\n')
+      ;
+    printf("La partita inizierà a breve!\n");
+  }
 }
 
 void msgq_attach_handler(void) {

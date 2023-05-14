@@ -33,6 +33,7 @@ int main(const int argc, char *const argv[]) {
   printf("Fatto!\nEcco l'ID di questa partita: %i \n", msgq_id);
 
   msgq_attach_handler();
+  signal(RANDOM_CLIENT_SIGNAL, start_random_client);
 
   printf("In attesa che si connettano i due giocatori... ");
   fflush(stdout);

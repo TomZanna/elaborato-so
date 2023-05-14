@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/msg.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 int msgq_id = -1;
@@ -135,4 +136,36 @@ void msgq_handle_new_feedback(int sig) {
 
 void msgq_attach_handler(void) {
   signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_feedback);
+}
+
+void wait_random_bot(void) { wait(NULL); }
+
+void no_more_random_bot(__attribute__((unused)) int sig) {
+  fprintf(
+      stderr,
+      "Partita già al completo, non è possibile avviare il bot avversario\n");
+
+  msgq_send_exit_status();
+  exit(EXIT_FAILURE);
+}
+
+void start_random_client(int sig) {
+  signal(sig, no_more_random_bot);
+
+  int pid = fork();
+
+  if (pid == 0) {
+    char buf[5];
+    snprintf(buf, sizeof(buf), "%i", msgq_id);
+
+    close(1);
+    execlp("connect4-client", "argv0", buf, "random", NULL);
+
+    // kill al server
+  } else if (pid > 0) {
+    atexit(wait_random_bot);
+  } else {
+    perror("Errore durante l'avvio del bot avversario");
+    EXIT_ON_ERR(-1);
+  }
 }

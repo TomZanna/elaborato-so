@@ -12,3 +12,5 @@ int msgq_send_tie();
 void msgq_attach_handler(void);
 
 void msgq_send_exit_status(void);
+
+void start_random_client(int sig);
