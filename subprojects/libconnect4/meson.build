@@ -18,6 +18,7 @@ libconnect4_dep = declare_dependency(
 
 tests = [
     ['parse_uint', ['test/parse_uint.c', 'src/lib.c']],
+    ['sem_getnum', ['test/sem_getnum.c', 'src/sem_utils.c']],
 ]
 
 foreach test : tests

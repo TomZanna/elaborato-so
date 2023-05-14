@@ -22,7 +22,7 @@ struct msgq_config {
 
 struct msgq_status {
   long mtype;
-  enum match_result { TIE, LOSE, WIN, ABANDONED } result;
+  enum game_result { TIE, LOSE, WIN, TABLE_WIN } result;
 };
 
 struct msgq_feedback {
@@ -36,18 +36,18 @@ struct msgq_feedback {
 
 #define MSGQ_CONFIG_MTYPE 1
 #define MSGQ_FEEDBACK_MTYPE 2
-#define MSGQ_STRUCT_SIZE(in_struct)                                            \
-  sizeof(in_struct) - sizeof((in_struct).mtype)
+#define MSGQ_STRUCT_SIZE(input_struct)                                         \
+  sizeof(input_struct) - sizeof((input_struct).mtype)
 
 #define MSGQ_FEEDBACK_SIGNAL SIGUSR1
 #define MSGQ_STATUS_SIGNAL SIGUSR1
 
-#define SERVER_CLOSED_SIGNAL SIGUSR2
-#define RANDOM_CLIENT_SIGNAL SIGUSR2
+#define GAME_ENDED_SIGNAL SIGUSR2
+#define RANDOM_BOT_SIGNAL SIGUSR2
 
 int parse_uint(unsigned int *const, const char *const);
 
-int sem_getnum(int player_num);
+int sem_lib_getnum(int player_num);
 
 int sem_lib_wait(int sem_id, int sem_num, int sem_op);
 

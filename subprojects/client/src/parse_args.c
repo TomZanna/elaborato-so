@@ -17,7 +17,7 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
   while ((c = getopt(argc, argv, "hs")) != -1)
     switch (c) {
     case 'h':
-      fputs(HELP_OUTPUT_TEXT, stdout);
+      printf(HELP_OUTPUT_TEXT);
       return -2;
     case 's':
       output->single_player = 1; // gamemode

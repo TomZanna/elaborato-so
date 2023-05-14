@@ -1,6 +1,12 @@
 #include <errno.h>
 #include <sys/sem.h>
 
+int sem_lib_getnum(int player_num) {
+  // mappa il numero del giocatore sul rispettivo semaforo
+  // i semafori 0 e 1 sono per la sincronizzazione iniziale
+  return (player_num + 1) * 2;
+}
+
 int sem_lib_wait(int sem_id, int sem_num, int sem_op) {
   static struct sembuf sops = {0};
 

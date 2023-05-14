@@ -62,15 +62,18 @@ void shm_print_grid(void) {
 int shm_input_valid(int column) {
   char(*const grid_addr)[grid.height] = grid.addr;
 
+  // cerco la prima casella vuota (se c'è)
   int pos;
   for (pos = 0; pos < grid.height; pos++)
     if (grid_addr[column][pos] == 0)
       break;
 
+  // se non ci sono casella vuote, la colonna è piena
   if (pos == grid.height) {
     return -1;
   }
 
+  // altrimenti inserisco il mio gettone nella colonna
   grid_addr[column][pos] = grid.token;
   return 0;
 }

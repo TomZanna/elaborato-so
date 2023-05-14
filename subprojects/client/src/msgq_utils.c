@@ -19,10 +19,10 @@ int msgq_get_config(const int game_id, struct msgq_config *const config) {
   if (ret == -1) {
     switch (errno) {
     case EINVAL:
-      fputs("ID di gioco non valido!\n", stdout);
+      printf("ID di gioco non valido!\n");
       break;
     case ENOMSG:
-      fputs("La partita è già al completo.\n", stdout);
+      printf("La partita è già al completo.\n");
       break;
     default:
       perror("Errore durante la connessione");
@@ -84,7 +84,7 @@ void msgq_handle_new_status(int sig) {
            "Il punteggio è %i-%i",
            win, lose);
     break;
-  case ABANDONED:
+  case TABLE_WIN:
     printf(
         "L'avversario ha abbandonato la partita. Hai vinto a tavolino! *)\n");
     exit(EXIT_SUCCESS);

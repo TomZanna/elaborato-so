@@ -5,29 +5,21 @@
 #define HEIGHT 5
 
 void check_diagonal(void) {
-  // clang-format off
-  char grid[WIDTH][HEIGHT] = {
-      {0, 0, 0, 0, 'a'}, 
-      {0, 0, 0, 'a', 0}, 
-      {0, 0, 'a', 0, 0},
-      {0, 'a', 0, 0, 0}, 
-      {0, 0, 0, 0, 0},
-  };
-  // clang-format on
+  char grid[WIDTH][HEIGHT] = {{0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 'a', 0},
+                              {0, 0, 'a', 0, 0},
+                              {0, 'a', 0, 0, 0},
+                              {0, 0, 0, 0, 0}};
 
   assert(_check_diagonal(WIDTH, HEIGHT, grid) == 'a');
 }
 
 void check_back_diagonal(void) {
-  // clang-format off
-  char grid[WIDTH][HEIGHT] = {
-      {'a', 0, 0, 0, 0},
-      {0, 'a', 0, 0, 0},
-      {0, 0, 'a', 0, 0},
-      {0, 0, 0, 'a', 0},
-      {0, 0, 0, 0, 0},
-  };
-  // clang-format on
+  char grid[WIDTH][HEIGHT] = {{'a', 0, 0, 0, 0},
+                              {0, 'a', 0, 0, 0},
+                              {0, 0, 'a', 0, 0},
+                              {0, 0, 0, 'a', 0},
+                              {0, 0, 0, 0, 0}};
 
   assert(_check_back_diagonal(WIDTH, HEIGHT, grid) == 'a');
 }

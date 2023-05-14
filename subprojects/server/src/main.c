@@ -7,10 +7,12 @@
 #include <stdio.h>
 
 int main(const int argc, char *const argv[]) {
-  struct args cmd_args = {0};
+  // inizializzo gli handler per i segnali
   signal(SIGINT, sigint_handler);
   signal(SIGTERM, sigterm_handler);
 
+  // analizzo gli argomenti ricevuti da riga di comando
+  struct args cmd_args = {0};
   EXIT_ON_ERR(parse_args(&cmd_args, argc, argv));
   printf("Impostazioni della partita:\n"
          "- Griglia di dimensione %ix%i\n"
@@ -30,6 +32,7 @@ int main(const int argc, char *const argv[]) {
   EXIT_ON_ERR(shm_id =
                   shm_initialize(cmd_args.grid_height, cmd_args.grid_width));
 
+  // pongo nella coda i messaggi di configurazione per i client
   EXIT_ON_ERR(msgq_send_config(&cmd_args, shm_id, sem_id));
   printf("Fatto!\nEcco l'ID di questa partita: %i \n", msgq_id);
 
@@ -39,15 +42,15 @@ int main(const int argc, char *const argv[]) {
   EXIT_ON_ERR(sem_signal_start());
   printf("possiamo cominciare!\n");
 
-  int player_turn = 1; // inizia il secondo (ultimo connesso)
+  int player_turn = 1; // inizia il secondo client (ultimo connesso)
   while (1) {
-    // sblocco uno dei due giocatori
+    // sblocco il giocatore
     EXIT_ON_ERR(sem_signal_turn(player_turn));
 
     // aspetto la mossa del giocatore
     EXIT_ON_ERR(sem_wait_move(player_turn));
 
-    // controllo se uno dei due ha vinto
+    // controllo se c'è un nuovo vincitore
     char winner = shm_check_game();
 
     if (winner > 0 || shm_grid_full()) {

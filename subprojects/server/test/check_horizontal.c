@@ -6,57 +6,41 @@
 #define HEIGHT 5
 
 void check_top_left(void) {
-  // clang-format off
-  char grid[WIDTH][HEIGHT] = {
-      {'a', 0, 0, 0, 0}, 
-      {'a', 0, 0, 0, 0}, 
-      {'a', 0, 0, 0, 0},
-      {'a', 0, 0, 0, 0}, 
-      {0, 0, 0, 0, 0},
-  };
-  // clang-format on
+  char grid[WIDTH][HEIGHT] = {{'a', 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0},
+                              {0, 0, 0, 0, 0}};
 
   assert(_check_horizontal(WIDTH, HEIGHT, grid) == 'a');
 }
 
 void check_top_right(void) {
-  // clang-format off
-  char grid[WIDTH][HEIGHT] = {
-      {0, 0, 0, 0, 'a'}, 
-      {0, 0, 0, 0, 'a'}, 
-      {0, 0, 0, 0, 'a'},
-      {0, 0, 0, 0, 'a'}, 
-      {0, 0, 0, 0, 0},
-  };
-  // clang-format on
-  
+  char grid[WIDTH][HEIGHT] = {{0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 0}};
+
   assert(_check_horizontal(WIDTH, HEIGHT, grid) == 'a');
 }
 
 void check_bottom_left(void) {
-  // clang-format off
-  char grid[WIDTH][HEIGHT] = {
-      {0, 0, 0, 0, 0}, 
-      {'a', 0, 0, 0, 0}, 
-      {'a', 0, 0, 0, 0},
-      {'a', 0, 0, 0, 0}, 
-      {'a', 0, 0, 0, 0},
-  };
-  // clang-format on
+  char grid[WIDTH][HEIGHT] = {{0, 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0},
+                              {'a', 0, 0, 0, 0}};
 
   assert(_check_horizontal(WIDTH, HEIGHT, grid) == 'a');
 }
 
 void check_bottom_right(void) {
-  // clang-format off
-  char grid[WIDTH][HEIGHT] = {
-      {0, 0, 0, 0, 0}, 
-      {0, 0, 0, 0, 'a'}, 
-      {0, 0, 0, 0, 'a'},
-      {0, 0, 0, 0, 'a'}, 
-      {0, 0, 0, 0, 'a'},
-  };
-  // clang-format on
+  char grid[WIDTH][HEIGHT] = {{0, 0, 0, 0, 0},
+                              {0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 'a'},
+                              {0, 0, 0, 0, 'a'}};
 
   assert(_check_horizontal(WIDTH, HEIGHT, grid) == 'a');
 }

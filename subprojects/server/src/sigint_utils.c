@@ -36,4 +36,6 @@ void sigint_handler(int signum) {
   }
 }
 
-void sigterm_handler(__attribute_maybe_unused__ int signum) { exit(0); }
+void sigterm_handler(__attribute_maybe_unused__ int signum) {
+  exit(EXIT_FAILURE);
+}

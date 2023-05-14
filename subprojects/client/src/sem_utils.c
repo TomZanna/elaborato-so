@@ -15,7 +15,7 @@ void sem_config(int new_sem_id, int new_player_number) {
 
 int sem_signal_ready(void) {
   if (sem_lib_signal(sem_id, 0, 1) == -1) {
-    perror("Errore di sincronizzazione: ");
+    perror("Errore di sincronizzazione");
     return -1;
   }
 
@@ -24,7 +24,7 @@ int sem_signal_ready(void) {
 
 int sem_wait_start(void) {
   if (sem_lib_wait(sem_id, 1, -1) == -1) {
-    perror("Errore di sincronizzazione: ");
+    perror("Errore di sincronizzazione");
     return -1;
   }
 
@@ -33,8 +33,8 @@ int sem_wait_start(void) {
 
 int sem_wait_turn(void) {
   // il primo giocatore aspetta sul semaforo 1
-  if (sem_lib_wait(sem_id, sem_getnum(player_number), -1) == -1) {
-    perror("Errore di sincronizzazione: ");
+  if (sem_lib_wait(sem_id, sem_lib_getnum(player_number), -1) == -1) {
+    perror("Errore di sincronizzazione");
     return -1;
   }
 
@@ -42,8 +42,8 @@ int sem_wait_turn(void) {
 }
 
 int sem_signal_move(void) {
-  if (sem_lib_signal(sem_id, sem_getnum(player_number) + 1, 1) == -1) {
-    perror("Errore di sincronizzazione: ");
+  if (sem_lib_signal(sem_id, sem_lib_getnum(player_number) + 1, 1) == -1) {
+    perror("Errore di sincronizzazione");
     return -1;
   }
 

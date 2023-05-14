@@ -40,7 +40,7 @@ int shm_initialize(const unsigned int height, const unsigned int width) {
 
   // registro callback da eseguire durante la terminazione del programma
   if (atexit(shm_teardown) < 0) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 
@@ -48,14 +48,14 @@ int shm_initialize(const unsigned int height, const unsigned int width) {
                      S_IRWXU | S_IRWXG | S_IRWXO);
 
   if (config.id == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 
   config.addr = shmat(config.id, NULL, 0);
 
   if (config.addr == (void *)-1) {
-    perror("Errore durante l'inizializzazione del campo di gioco: ");
+    perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
 

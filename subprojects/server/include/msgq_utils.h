@@ -11,6 +11,6 @@ int msgq_send_tie();
 
 void msgq_handle_new_feedback(int sig);
 
-void msgq_send_exit_status(void);
+void msgq_send_game_ended(void);
 
-void start_random_client(int sig);
+void handle_bot_request(int sig);

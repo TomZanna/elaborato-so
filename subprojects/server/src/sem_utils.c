@@ -22,7 +22,7 @@ int sem_initialize(void) {
   }
 
   // 2 per la connessione + 2 a testa per sincronizzare turno/mossa
-  sem_id = semget(IPC_PRIVATE, 6, S_IRWXU | S_IRWXG | S_IRWXO);
+  sem_id = semget(IPC_PRIVATE, 2 + 4, S_IRWXU | S_IRWXG | S_IRWXO);
 
   if (sem_id == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco");
@@ -54,7 +54,7 @@ int sem_signal_start(void) {
 
 int sem_signal_turn(int player_number) {
   // sblocco il giocatore affichè possa fare la sua mossa
-  if (sem_lib_signal(sem_id, sem_getnum(player_number), 1) == -1) {
+  if (sem_lib_signal(sem_id, sem_lib_getnum(player_number), 1) == -1) {
     perror("Errore durante l'arbitraggio della partita");
     return -1;
   }
@@ -63,8 +63,8 @@ int sem_signal_turn(int player_number) {
 }
 
 int sem_wait_move(int player_number) {
-  // attendo la giocata del giocatore
-  if (sem_lib_wait(sem_id, sem_getnum(player_number) + 1, -1) == -1) {
+  // attendo la giocata del client
+  if (sem_lib_wait(sem_id, sem_lib_getnum(player_number) + 1, -1) == -1) {
     perror("Errore durante l'arbitraggio della partita");
     return -1;
   }

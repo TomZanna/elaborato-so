@@ -28,7 +28,7 @@ int parse_args(struct args *const output, const int argc, char *const argv[]) {
   while ((c = getopt(argc, argv, "ht:")) != -1)
     switch (c) {
     case 'h':
-      fputs(HELP_OUTPUT_TEXT, stdout);
+      printf(HELP_OUTPUT_TEXT);
       return -2;
     case 't':
       if (parse_uint(&output->timeout, optarg) != 0) {
