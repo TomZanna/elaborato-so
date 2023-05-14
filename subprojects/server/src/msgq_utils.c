@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 int msgq_id = -1;
+int players_count = 0;
 int players_pid[2] = {-1};
 
 void msgq_teardown(void) {
@@ -48,8 +49,11 @@ int msgq_send_config(const struct args *const args, const int shm_id,
       .shm_id = shm_id,
   };
 
+  atexit(msgq_send_exit_status);
   signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_feedback);
+  signal(RANDOM_CLIENT_SIGNAL, start_random_client);
 
+  // inserisco nella coda due messaggi con la conf della partita
   for (int i = 0; i < 2; i++) {
     game_config.player_number = i;
     game_config.player_token =
@@ -105,30 +109,31 @@ int msgq_send_tie() {
   return 0;
 }
 
-int msgq_send_abandoned(int player_number) {
-  static struct msgq_status tmp_msg = {0};
-
-  int i = (player_number + 1) % 2;
-
-  tmp_msg.mtype = players_pid[i];
-  tmp_msg.result = ABANDONED;
-
-  if (msgsnd(msgq_id, &tmp_msg, MSGQ_STRUCT_SIZE(tmp_msg), 0)) {
-    perror("Errore di comunicazione");
-    return -1;
-  }
-
-  kill(tmp_msg.mtype, MSGQ_STATUS_SIGNAL);
-
-  return 0;
-}
-
 void msgq_send_exit_status(void) {
   for (int i = 0; i < 2; i++) {
     if (players_pid[i] != -1) {
       kill(players_pid[i], SERVER_CLOSED_SIGNAL);
     }
   }
+}
+
+int msgq_send_abandoned(int player_number) {
+  struct msgq_status tmp_msg = {
+      .mtype = players_pid[player_number],
+      .result = ABANDONED,
+  };
+
+  // se c'è l'avversario, lo informo che ha vinto a tavolino
+  if (tmp_msg.mtype != -1) {
+    if (msgsnd(msgq_id, &tmp_msg, MSGQ_STRUCT_SIZE(tmp_msg), 0)) {
+      perror("Errore di comunicazione");
+      return -1;
+    }
+
+    kill(tmp_msg.mtype, MSGQ_STATUS_SIGNAL);
+  }
+
+  return 0;
 }
 
 void msgq_handle_new_feedback(int sig) {
@@ -143,9 +148,13 @@ void msgq_handle_new_feedback(int sig) {
   };
 
   if (tmp_msg.status == HELO) {
+    // salvo il pid del giocatore che si è connesso
+    players_count++;
     players_pid[tmp_msg.client_num] = tmp_msg.client_pid;
   } else if (tmp_msg.status == LEAVING) {
-    msgq_send_abandoned(tmp_msg.client_num);
+    // informo il client avversario che ha vinto a tavolino
+    msgq_send_abandoned((tmp_msg.client_num + 1) % 2);
+
     sleep(2);
     exit(0);
   }
@@ -153,22 +162,27 @@ void msgq_handle_new_feedback(int sig) {
 
 void wait_random_bot(void) { wait(NULL); }
 
-void start_random_client(int sig) {
-  signal(sig, SIG_IGN);
+void start_random_client(__attribute_maybe_unused__ int sig) {
+
+  // il secondo client chiede il bot, errore
+  if (players_count >= 2) {
+    fprintf(stderr, "Sono ammessi solo due giocatori\n");
+    exit(EXIT_FAILURE);
+  }
 
   int pid = fork();
 
   if (pid == 0) {
-    char buf[5];
+    char buf[100];
     snprintf(buf, sizeof(buf), "%i", msgq_id);
 
     close(1);
-    execlp("connect4-client", "argv0", buf, "random", NULL);
+    execlp("./connect4-client", "connect4-client", buf, "random", NULL);
     perror("Errore durante l'avvio del bot avversario");
 
     // errore, termino la partita per tutti
-    kill(SIGINT, getppid());
-
+    kill(SIGTERM, getppid());
+    exit(EXIT_FAILURE);
   } else if (pid > 0) {
     atexit(wait_random_bot);
   } else {

@@ -67,7 +67,7 @@ int shm_grid_full(void) {
   char(*grid)[height] = config.addr;
 
   for (int i = 0; i < width - 1; i++) {
-    // check if there is an empty column, i.e. the last element is 0
+    // controllo se c'è almeno una colonna vuota
     if (grid[i][height - 1] == 0)
       return 0;
   }

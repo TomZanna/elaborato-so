@@ -9,6 +9,7 @@
 int main(const int argc, char *const argv[]) {
   struct args cmd_args = {0};
   signal(SIGINT, sigint_handler);
+  signal(SIGTERM, sigterm_handler);
 
   EXIT_ON_ERR(parse_args(&cmd_args, argc, argv));
   printf("Impostazioni della partita:\n"
@@ -31,9 +32,6 @@ int main(const int argc, char *const argv[]) {
 
   EXIT_ON_ERR(msgq_send_config(&cmd_args, shm_id, sem_id));
   printf("Fatto!\nEcco l'ID di questa partita: %i \n", msgq_id);
-
-  signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_feedback);
-  signal(RANDOM_CLIENT_SIGNAL, start_random_client);
 
   printf("In attesa che si connettano i due giocatori... ");
   fflush(stdout);

@@ -94,12 +94,12 @@ void msgq_handle_new_status(int sig) {
   }
 
   printf("\nPremi ENTER per iniziare la prossima partita");
-  while (getchar() != '\n' && !random_mode)
+  while (!random_mode && getchar() != '\n')
     ;
   printf("La partita inizierà a breve!\n");
 }
 
-void msgq_send_leaving(int sig) {
+void msgq_send_leaving(__attribute_maybe_unused__ int sig) {
   struct msgq_feedback feedback;
   feedback.mtype = MSGQ_FEEDBACK_MTYPE;
   feedback.status = LEAVING;

@@ -31,7 +31,8 @@ Il progetto usa [meson](https://mesonbuild.com/) come build system. I file `meso
 - `P2TOKEN`: un carattere che rappresenta il simbolo assegnato al giocatore 2
 
 ### Client
-`connect4-client USERNAME GAME_ID`
+`connect4-client [-s] USERNAME GAME_ID`
+- `-s`: parametro per richiedere la modalità single player
 - `GAME_ID`: id generato dal server che identifica la partita
 - `USERNAME`: username con cui sarà identificato il giocatore
 
@@ -51,6 +52,7 @@ I semafori utilizzati invece sono i seguenti:
 
 Per quanto riguarda i segnali abbiamo il server che utilizza:
 - `SIGUSR1`: per capire quando un nuovo messaggio viene posto nella coda
+- `SIGUSR2`: per rispondere alla richiesta di un client di avviare la modalità single player
 - `SIGINT`: per terminare la partita per entrambi i giocatori
 
 I processi client invece reagiscono ai seguenti segnali:

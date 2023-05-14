@@ -32,7 +32,8 @@ void sigint_handler(int signum) {
            "tutti!\n",
            MAX_KEY_PRESS);
 
-    msgq_send_exit_status();
     exit(0);
   }
 }
+
+void sigterm_handler(__attribute_maybe_unused__ int signum) { exit(0); }
