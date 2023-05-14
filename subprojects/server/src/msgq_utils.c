@@ -13,8 +13,6 @@
 int msgq_id = -1;
 int players_pid[2] = {-1};
 
-void msgq_handle_new_feedback(int sig);
-
 void msgq_teardown(void) {
   if (msgq_id != -1)
     msgctl(msgq_id, IPC_RMID, NULL);
@@ -153,23 +151,10 @@ void msgq_handle_new_feedback(int sig) {
   }
 }
 
-void msgq_attach_handler(void) {
-  signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_feedback);
-}
-
 void wait_random_bot(void) { wait(NULL); }
 
-void no_more_random_bot(__attribute__((unused)) int sig) {
-  fprintf(
-      stderr,
-      "Partita già al completo, non è possibile avviare il bot avversario\n");
-
-  msgq_send_exit_status();
-  exit(EXIT_FAILURE);
-}
-
 void start_random_client(int sig) {
-  signal(sig, no_more_random_bot);
+  signal(sig, SIG_IGN);
 
   int pid = fork();
 
@@ -179,8 +164,11 @@ void start_random_client(int sig) {
 
     close(1);
     execlp("connect4-client", "argv0", buf, "random", NULL);
+    perror("Errore durante l'avvio del bot avversario");
 
-    // kill al server
+    // errore, termino la partita per tutti
+    kill(SIGINT, getppid());
+
   } else if (pid > 0) {
     atexit(wait_random_bot);
   } else {

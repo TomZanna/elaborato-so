@@ -34,6 +34,9 @@ int msgq_get_config(const int game_id, struct msgq_config *const config) {
   server_pid = config->server_pid;
   player_num = config->player_number;
 
+  signal(SIGINT, msgq_send_leaving);
+  signal(MSGQ_FEEDBACK_SIGNAL, msgq_handle_new_status);
+
   struct msgq_feedback feedback;
   feedback.mtype = MSGQ_FEEDBACK_MTYPE;
   feedback.status = HELO;
@@ -82,23 +85,18 @@ void msgq_handle_new_status(int sig) {
            win, lose);
     break;
   case ABANDONED:
-    printf("L'avversario ha abbandonato la partita. Hai vinto a tavolino! *)");
+    printf(
+        "L'avversario ha abbandonato la partita. Hai vinto a tavolino! *)\n");
     exit(EXIT_SUCCESS);
 
   default:
     break;
   }
 
-  if (!random_mode) {
-    printf("\nPremi ENTER per iniziare la prossima partita");
-    while (getchar() != '\n')
-      ;
-    printf("La partita inizierà a breve!\n");
-  }
-}
-
-void msgq_attach_handler(void) {
-  signal(MSGQ_STATUS_SIGNAL, msgq_handle_new_status);
+  printf("\nPremi ENTER per iniziare la prossima partita");
+  while (getchar() != '\n' && !random_mode)
+    ;
+  printf("La partita inizierà a breve!\n");
 }
 
 void msgq_send_leaving(int sig) {

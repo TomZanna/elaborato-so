@@ -1,1 +1,1 @@
-void sigint_attach_handler(void);
+void sigint_handler(int sig);

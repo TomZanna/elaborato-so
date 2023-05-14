@@ -11,7 +11,8 @@
 void sigint_handler(int signum) {
   static int count = MAX_KEY_PRESS;
 
-  sigint_attach_handler();
+  signal(SIGALRM, sigint_handler);
+  signal(SIGINT, sigint_handler);
 
   if (signum == SIGALRM) {
     printf("Non hai premuto CTRL+C entro i %i secondi.\n", SIGINT_TIMEOUT);
@@ -34,9 +35,4 @@ void sigint_handler(int signum) {
     msgq_send_exit_status();
     exit(0);
   }
-}
-
-void sigint_attach_handler(void) {
-  signal(SIGALRM, sigint_handler);
-  signal(SIGINT, sigint_handler);
 }
