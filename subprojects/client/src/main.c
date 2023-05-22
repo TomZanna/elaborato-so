@@ -12,11 +12,11 @@
 
 int random_mode = 0;
 
-void sigalrm_handler(__attribute_maybe_unused__ int signal) {
+void sigalrm_handler(__attribute__((unused)) int signal) {
   printf("Tempo scaduto! Il turno passa all'avversario.\n");
 }
 
-void game_ended_handler(__attribute_maybe_unused__ int sig) {
+void game_ended_handler(__attribute__((unused)) int sig) {
   printf("\nIl server ha ordinato la chiusura della partita\n");
   exit(EXIT_SUCCESS);
 }

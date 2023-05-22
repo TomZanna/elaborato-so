@@ -99,7 +99,7 @@ void msgq_handle_new_status(int sig) {
   printf("La partita inizierà a breve!\n");
 }
 
-void msgq_send_leaving(__attribute_maybe_unused__ int sig) {
+void msgq_send_leaving(__attribute__((unused)) int sig) {
   struct msgq_feedback feedback;
   feedback.mtype = MSGQ_FEEDBACK_MTYPE;
   feedback.status = LEAVING;

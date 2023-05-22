@@ -165,7 +165,7 @@ void msgq_handle_new_feedback(int sig) {
 
 void wait_random_bot(void) { wait(NULL); }
 
-void handle_bot_request(__attribute_maybe_unused__ int sig) {
+void handle_bot_request(__attribute__((unused)) int sig) {
 
   // il secondo client chiede il bot, errore
   if (players_count >= 2) {
