@@ -15,9 +15,10 @@ Il progetto usa [meson](https://mesonbuild.com/) come build system. I file `meso
 
 ## Compilazione
 1. Installare un compilatore per il linguaggio C (es. `gcc`), il build system `meson` ed il backend `ninja`
-2. Creare una directory per la compilazione: `meson setup builddir`
-3. Compilare il progetto: `meson compile -C builddir`
-4. Eseguire i binari `connect4-client` e `connect4-server` presenti nella directory `builddir` in terminali diversi
+2. Creare una directory per la compilazione: `meson setup -Dprefix=/ builddir`
+3. Compilare ed installare i binari: `DESTDIR=. meson install -C builddir`
+4. Eseguire i binari `connect4-client` e `connect4-server` presenti nella directory `builddir/bin` in terminali diversi  
+_NB Per poter giocare in single player entrambi i binari devono essere nella CWD_
 
 > Anzichè installare `meson` e `ninja` è possibile utilizzare il binario `muon`. Per ulteriori informazioni si rimanda alla [documentazione](https://muon.build/) di quest'ultimo.
 
@@ -31,7 +32,7 @@ Il progetto usa [meson](https://mesonbuild.com/) come build system. I file `meso
 - `P2TOKEN`: un carattere che rappresenta il simbolo assegnato al giocatore 2
 
 ### Client
-`connect4-client [-s] USERNAME GAME_ID`
+`connect4-client [-s] GAME_ID USERNAME`
 - `-s`: parametro per richiedere la modalità single player
 - `GAME_ID`: id generato dal server che identifica la partita
 - `USERNAME`: username con cui sarà identificato il giocatore
