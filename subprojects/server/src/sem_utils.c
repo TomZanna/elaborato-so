@@ -23,11 +23,14 @@ int sem_initialize(void) {
 
   // 2 per la connessione + 2 a testa per sincronizzare turno/mossa
   sem_id = semget(IPC_PRIVATE, 2 + 4, S_IRWXU | S_IRWXG | S_IRWXO);
+  unsigned short sem_array[2 + 4] = {0};
 
   if (sem_id == -1) {
     perror("Errore durante l'inizializzazione del campo di gioco");
     return -1;
   }
+
+  semctl(sem_id, 0 /*ignored*/, SETALL, sem_array);
 
   return sem_id;
 }
