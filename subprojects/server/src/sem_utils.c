@@ -38,7 +38,7 @@ int sem_initialize(void) {
 int sem_wait_ready(void) {
   // aspetto entrambi i giocatori
   if (sem_lib_wait(sem_id, 0, -2) == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco");
+    perror("Errore durante l'inizio della partita");
     return -1;
   }
 
@@ -48,7 +48,7 @@ int sem_wait_ready(void) {
 int sem_signal_start(void) {
   // sblocco i giocatori in attesa
   if (sem_lib_signal(sem_id, 1, 2) == -1) {
-    perror("Errore durante l'inizializzazione del campo di gioco");
+    perror("Errore durante l'inizio della partita");
     return -1;
   }
 

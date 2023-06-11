@@ -161,7 +161,10 @@ void msgq_handle_new_feedback(int sig) {
   }
 }
 
-void wait_random_bot(void) { wait(NULL); }
+void wait_random_bot(int sig) {
+  signal(sig, wait_random_bot);
+  wait(NULL);
+}
 
 void handle_bot_request(__attribute__((unused)) int sig) {
 
@@ -174,12 +177,13 @@ void handle_bot_request(__attribute__((unused)) int sig) {
     close(1);
     execlp("./connect4-client", "connect4-client", buf, "random", NULL);
     perror("Errore durante l'avvio del bot avversario");
+    fprintf(stderr, "Assicurati che il binario del client sia nella CWD\n");
 
     // errore, ordino al server di terminare la partita per tutti
-    kill(SIGTERM, getppid());
-    exit(EXIT_FAILURE);
+    kill(getppid(), SIGTERM);
+    _exit(EXIT_FAILURE);
   } else if (pid > 0) {
-    atexit(wait_random_bot);
+    signal(SIGCHLD, wait_random_bot);
   } else {
     perror("Errore durante l'avvio del bot avversario");
     EXIT_ON_ERR(-1);

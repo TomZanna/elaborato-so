@@ -43,9 +43,10 @@ int main(const int argc, char *const argv[]) {
                          config.player_token));
 
   // se mio padre è il server, gioco in modalità casuale
-  if (config.server_pid == getppid())
+  if (config.server_pid == getppid()) {
     random_mode = 1;
-  else if (cmd_args.single_player)
+    signal(SIGINT, SIG_IGN);
+  } else if (cmd_args.single_player)
     kill(config.server_pid, RANDOM_BOT_SIGNAL);
 
   printf("Connesso!\nIn attesa dell'avversario... ");
