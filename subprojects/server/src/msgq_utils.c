@@ -11,7 +11,6 @@
 #include <unistd.h>
 
 int msgq_id = -1;
-int players_count = 0;
 int players_pid[2] = {-1, -1};
 
 void msgq_teardown(void) {
@@ -152,7 +151,6 @@ void msgq_handle_new_feedback(int sig) {
 
   if (tmp_msg.status == HELO) {
     // salvo il pid del giocatore che si è connesso
-    players_count++;
     players_pid[tmp_msg.client_num] = tmp_msg.client_pid;
   } else if (tmp_msg.status == LEAVING) {
     // informo il client avversario che ha vinto a tavolino
@@ -166,12 +164,6 @@ void msgq_handle_new_feedback(int sig) {
 void wait_random_bot(void) { wait(NULL); }
 
 void handle_bot_request(__attribute__((unused)) int sig) {
-
-  // il secondo client chiede il bot, errore
-  if (players_count >= 2) {
-    fprintf(stderr, "Sono ammessi solo due giocatori\n");
-    exit(EXIT_FAILURE);
-  }
 
   int pid = fork();
 
