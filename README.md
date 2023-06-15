@@ -3,6 +3,14 @@
 ## Introduzione
 Implementazione del gioco [Forza 4](https://en.wikipedia.org/wiki/Connect_Four) utilizzando le [system call System V](https://man7.org/linux/man-pages/man7/sysvipc.7.html) per l'elaborato di sistemi operativi (2022-23).
 
+### Regole del gioco
+Le regole previste dal gioco originale sono state estese come segue:
+- La terminazione di un client _in qualsiasi momento_ da parte di un giocatore porta alla vittoria a tavolino dell'avversario.
+- Le giocate proseguono ad oltranza ed il compito di concludere la partita spetta a chi gestisce il server (terminandolo, banalmente).
+- Nel caso si adottasse la modalità di gioco con timeout, allo scadere del tempo il turno passa al giocatore avversario.
+- La modalità single player è una richiesta che il client fa al server e non è garantito che sarà soddisfatta.
+- Ad ogni server si possono collegare al massimo due client ma è possibile avviare più di un server.
+
 ## Directory
 * `.vscode`: contiene i file di configurazione per l'editor Visual Studio Code
 * `subprojects`
