@@ -163,7 +163,13 @@ void msgq_handle_new_feedback(int sig) {
 
 void wait_random_bot(int sig) {
   signal(sig, wait_random_bot);
-  wait(NULL);
+
+  int status;
+  wait(&status);
+
+  if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
+    exit(EXIT_FAILURE);
+  }
 }
 
 void handle_bot_request(__attribute__((unused)) int sig) {
